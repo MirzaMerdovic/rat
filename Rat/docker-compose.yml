@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  rat.api:
+    image: ${DOCKER_REGISTRY-}ratapi
+    build:
+      context: .
+      dockerfile: Rat.Api/Dockerfile

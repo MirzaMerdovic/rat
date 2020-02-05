@@ -14,8 +14,21 @@ using System.Threading.Tasks;
 
 namespace Rat.Providers.Configuration
 {
-    public class ConfigurationProvider : IConfigurationProvider
+    public sealed class ConfigurationProvider : IConfigurationProvider
     {
+        private static readonly Func<HttpRequestException, bool> CheckError = delegate (HttpRequestException x)
+        {
+            if (!x.Data.Contains(nameof(HttpStatusCode)))
+                return false;
+
+            var statusCode = (HttpStatusCode)x.Data[nameof(HttpStatusCode)];
+
+            if (statusCode < HttpStatusCode.InternalServerError)
+                return statusCode == HttpStatusCode.RequestTimeout;
+
+            return false;
+        };
+
         private static readonly Func<HttpResponseMessage, bool> TransientHttpStatusCodePredicate = delegate (HttpResponseMessage response)
         {
             if (response.StatusCode < HttpStatusCode.InternalServerError)
@@ -115,8 +128,7 @@ namespace Rat.Providers.Configuration
             var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
             var entity = ConvertBytes<ConfigurationEntry>(bytes);
 
-            if (entity == null)
-                throw new ConfigurationEntryNotFoundException(key);
+            _ = entity ?? throw new ConfigurationEntryNotFoundException(key);
 
             return entity;
 
@@ -125,14 +137,10 @@ namespace Rat.Providers.Configuration
                 if (b == null)
                     return default;
 
-                var formatter = new BinaryFormatter();
+                using var stream = new MemoryStream(b);
+                object value = new BinaryFormatter().Deserialize(stream);
 
-                using (var stream = new MemoryStream(b))
-                {
-                    object value = formatter.Deserialize(stream);
-
-                    return (T)value;
-                }
+                return (T)value;
             }
         }
 
@@ -142,39 +150,10 @@ namespace Rat.Providers.Configuration
             _cache.Set(entity.Key, entity.Value, entity.Expiration ?? _options.CacheExpiry);
         }
 
-        private bool CheckError(HttpRequestException x)
-        {
-            if (!x.Data.Contains(nameof(HttpStatusCode)))
-                return false;
-
-            var statusCode = (HttpStatusCode)x.Data[nameof(HttpStatusCode)];
-
-            if (statusCode < HttpStatusCode.InternalServerError)
-                return statusCode == HttpStatusCode.RequestTimeout;
-
-            return false;
-        }
-
-        #region IDisposable Support
-
-        private bool _disposedValue = false;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposedValue)
-                return;
-
-            if (disposing)
-                _client.Dispose();
-
-            _disposedValue = true;
-        }
-
         public void Dispose()
         {
-            Dispose(true);
+            _client?.Dispose();
+            _cache?.Dispose();
         }
-
-        #endregion
     }
 }
