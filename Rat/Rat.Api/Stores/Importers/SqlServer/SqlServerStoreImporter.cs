@@ -1,6 +1,6 @@
 ﻿using Rat.Data;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,9 +8,11 @@ namespace Rat.Api.Stores.Importers.SqlServer
 {
     public class SqlServerStoreImporter : IStoreImporter
     {
-        public Task<IReadOnlyCollection<ConfigurationEntry>> Import(CancellationToken cancellation)
+        public string Type => "SqlServer";
+
+        public Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(Enumerable.Empty<ConfigurationEntry>());
         }
     }
 }

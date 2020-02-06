@@ -1,6 +1,6 @@
 ﻿using Rat.Data;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -8,11 +8,11 @@ namespace Rat.Api.Stores.Importers.Environment
 {
     public class EnvironmentStoreImporter : IStoreImporter
     {
-        public Task<IReadOnlyCollection<ConfigurationEntry>> Import(CancellationToken cancellation)
-        {
-            IReadOnlyCollection<ConfigurationEntry> imports = new List<ConfigurationEntry> { new ConfigurationEntry { Key = "A1", Value = "Alloo", Expiration = TimeSpan.FromSeconds(30) } };
+        public string Type => "Environment";
 
-            return Task.FromResult(imports);
+        public Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)
+        {
+            return Task.FromResult(Enumerable.Empty<ConfigurationEntry>());
         }
     }
 }

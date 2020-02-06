@@ -147,7 +147,8 @@ namespace Rat.Providers.Configuration
         private void SaveConfigurationEntity(ConfigurationEntry entity)
         {
             _keys.Add(entity.Key);
-            _cache.Set(entity.Key, entity.Value, entity.Expiration ?? _options.CacheExpiry);
+            var expiration = entity.Expiration == 0 ? _options.CacheExpiry : TimeSpan.FromSeconds(entity.Expiration);
+            _cache.Set(entity.Key, entity.Value, expiration);
         }
 
         public void Dispose()

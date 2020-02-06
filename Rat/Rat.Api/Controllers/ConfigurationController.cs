@@ -19,7 +19,7 @@ namespace Rat.Api.Controllers
         [HttpGet("{key}")]
         public async Task<IActionResult> Get(string key, CancellationToken cancellation)
         {
-            var entry = await _store.GetEntry(key, cancellation).ConfigureAwait(false);
+            var entry = await _store.GetEntry(key).ConfigureAwait(false);
 
             if (entry == null)
                 return NotFound();

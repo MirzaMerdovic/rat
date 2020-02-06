@@ -8,6 +8,6 @@ namespace Rat.Data
 
         public object Value { get; set; }
 
-        public TimeSpan? Expiration { get; set; }
+        public int Expiration { get; set; }
     }
 }

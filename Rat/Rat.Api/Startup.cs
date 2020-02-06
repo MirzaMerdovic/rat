@@ -13,7 +13,7 @@ using Newtonsoft.Json.Serialization;
 using Rat.Api.Observability;
 using Rat.Api.Stores;
 using Rat.Api.Stores.Importers.Environment;
-using Rat.Api.Stores.Importers.File;
+using Rat.Api.Stores.Importers.JsonFile;
 using Rat.Api.Stores.Importers.Mongo;
 using Rat.Data;
 using System;
@@ -53,7 +53,7 @@ namespace Rat.Api
                     .AddEnvironmentVariables()
                     .Build();
 
-            //services.Configure<ConnectionStrings>(configuration.GetSection("ConnectionStrings"));
+            services.Configure<JsonFileStoreOptions>(configuration.GetSection("JsonFileStoreOptions"));
 
             services.AddLogging(x => x.AddConsole());
 
@@ -62,7 +62,7 @@ namespace Rat.Api
             // Register your types
             services.AddTransient<IStoreImporter, MongoStoreImporter>();
             services.AddTransient<IStoreImporter, EnvironmentStoreImporter>();
-            services.AddTransient<IStoreImporter, FileStoreImporter>();
+            services.AddTransient<IStoreImporter, JsonFileStoreImporter>();
 
             services.AddSingleton<IConfigurationStore>(x =>
             {
@@ -75,11 +75,14 @@ namespace Rat.Api
 
                     foreach(var item in store)
                     {
-                        entries[item.Key] = item;
+                        if (string.IsNullOrWhiteSpace(item.Key))
+                            throw new ArgumentException($"FileStore: {importer.Type} has and entry without key.");
+
+                        entries[item.Key.Trim().ToUpperInvariant()] = item;
                     }
                 }
 
-                return new ConfigurationStore(entries);
+                return new ConfigurationStore(entries, x.GetService<ILogger<ConfigurationStore>>());
             });
 
             // Refer to this article if you require more information on CORS
