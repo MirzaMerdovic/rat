@@ -4,10 +4,10 @@ using Newtonsoft.Json;
 using Rat.Data;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 
 namespace Rat.Api.Stores.Importers.JsonFile
 {
@@ -37,7 +37,7 @@ namespace Rat.Api.Stores.Importers.JsonFile
             {
                 _logger.LogInformation($"JSON File: {_options.Path} doesn not exist.");
 
-                    return Enumerable.Empty<ConfigurationEntry>();
+                return Enumerable.Empty<ConfigurationEntry>();
             }
 
             if (!Path.GetExtension(_options.Path).Equals(".json", StringComparison.InvariantCultureIgnoreCase))
@@ -53,14 +53,28 @@ namespace Rat.Api.Stores.Importers.JsonFile
             return entries;
         }
 
-        // TODO: Use stream and JsonReader to optimize memory when loading big json files.
         private static async Task<IEnumerable<ConfigurationEntry>> Load(string path, ILogger logger)
         {
+            var serializer = new JsonSerializer();
+            var entries = new List<ConfigurationEntry>(0);
+            Stream stream = null;
+
             try
             {
-                var jsonFile = await File.ReadAllTextAsync(path).ConfigureAwait(false);
-                var entries = JsonConvert.DeserializeObject<IEnumerable<ConfigurationEntry>>(jsonFile);
-                jsonFile = string.Empty;
+                stream = File.OpenRead(path);
+                using (var reader = new JsonTextReader(new StreamReader(stream)))
+                {
+                    stream = null;
+
+                    while (await reader.ReadAsync().ConfigureAwait(false))
+                    {
+                        if (reader.TokenType != JsonToken.StartObject)
+                            continue;
+
+                        var entry = serializer.Deserialize<ConfigurationEntry>(reader);
+                        entries.Add(entry);
+                    }
+                }
 
                 return entries;
             }
@@ -69,6 +83,10 @@ namespace Rat.Api.Stores.Importers.JsonFile
                 logger.LogError($"Failed to deserialize JSON file content. Path: {path}", ex);
 
                 return Enumerable.Empty<ConfigurationEntry>();
+            }
+            finally
+            {
+                stream?.Dispose();
             }
         }
     }
