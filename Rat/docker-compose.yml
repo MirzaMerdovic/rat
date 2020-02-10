@@ -1,8 +1,92 @@
-version: '3.4'
+version: '3.7'
+
+# Templates:
+x-base: &base-service-template
+  init: true
+  networks:
+    local:
 
 services:
-  rat.api:
-    image: ${DOCKER_REGISTRY-}ratapi
+  rat:
+    container_name: rat
     build:
       context: .
       dockerfile: Rat.Api/Dockerfile
+    ports:
+      - "5555:80"
+
+  portainer:
+    <<: *base-service-template
+    image: portainer/portainer:1.23.0
+    container_name: portainer
+    command: -p :80
+    ports:
+      - "9000:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
+  mongo:
+    <<: *base-service-template
+    image: mongo:latest
+    container_name: mongo
+    command: >
+      sh -c "mongod --bind_ip 0.0.0.0 --port 80"
+    ports:
+      - "27017:80"
+    healthcheck:
+      test: echo 'db.stats().ok' | mongo mongo:80 --quiet
+      interval: 5s
+      timeout: 3s
+      retries: 3
+
+  sqlserver:
+    <<: *base-service-template
+    image: microsoft/mssql-server-linux:latest
+    container_name: sqlserver.ctn
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${SQLSERVER_SA_PASSWORD:-Password1!}
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ./opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password1!5 -Q "SELECT 1" || exit 1
+      interval: 2s
+      timeout: 2s
+      retries: 3
+      start_period: 3s
+
+  unicorn:
+    <<: *base-service-template
+    image: mirzamerdovic/unicorn:latest
+    container_name: unicorn.ctn
+    environment:
+      - MONGO_ADDRESS=mongo:80
+      - RECREATE_COLLECTIONS=true
+    depends_on:
+      - mongo
+    volumes:
+      - type: bind
+        source: ./data
+        target: /imports
+        read_only: true
+    healthcheck:
+      test: echo 'db.stats().ok' | mongo mongo --quiet
+      interval: 14s
+      timeout: 3s
+      retries: 3
+      start_period: 1s
+
+  metabase:
+    <<: *base-service-template
+    image: metabase/metabase:latest
+    container_name: metabase
+    ports:
+      - "3000:3000"
+
+volumes:
+  portainer_data:
+
+networks:
+  local:
+    name: local

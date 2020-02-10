@@ -15,6 +15,9 @@ using Rat.Api.Stores;
 using Rat.Api.Stores.Importers.Environment;
 using Rat.Api.Stores.Importers.JsonFile;
 using Rat.Api.Stores.Importers.Mongo;
+using Rat.Api.Stores.Importers.Mongo.Client;
+using Rat.Api.Stores.Importers.Mongo.Collection;
+using Rat.Api.Stores.Importers.Mongo.Database;
 using Rat.Data;
 using System;
 using System.Collections.Concurrent;
@@ -53,16 +56,24 @@ namespace Rat.Api
                     .AddEnvironmentVariables()
                     .Build();
 
-            services.Configure<JsonFileStoreOptions>(configuration.GetSection("JsonFileStoreOptions"));
+            services.Configure<JsonFileStoreOptions>(configuration.GetSection(nameof(JsonFileStoreOptions)));
+            services.Configure<MongoStoreOptions>(configuration.GetSection(nameof(MongoStoreOptions)));
+            services.Configure<MongoConnectionOptions>(configuration.GetSection(nameof(MongoConnectionOptions)));
+            services.Configure<MongoDatabaseOptions>(configuration.GetSection(nameof(MongoDatabaseOptions)));
+            services.Configure<MongoCollectionOptions>(configuration.GetSection(nameof(MongoCollectionOptions)));
 
             services.AddLogging(x => x.AddConsole());
 
             services.AddHealthChecks().AddCheck<BasicHealthCheck>("basic", tags: new[] { "ready", "live" });
 
+            services.AddSingleton<IMongoClientFactory, MongoClientFactory>();
+            services.AddSingleton<IMongoDatabaseFactory, MongoDatabaseFactory>();
+            services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
+
             // Register your types
+            services.AddTransient<IStoreImporter, JsonFileStoreImporter>();
             services.AddTransient<IStoreImporter, MongoStoreImporter>();
             services.AddTransient<IStoreImporter, EnvironmentStoreImporter>();
-            services.AddTransient<IStoreImporter, JsonFileStoreImporter>();
 
             services.AddSingleton<IConfigurationStore>(x =>
             {
