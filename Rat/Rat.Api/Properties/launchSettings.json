@@ -19,7 +19,9 @@
       "commandName": "Project",
       "launchBrowser": true,
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RAT_A1": "ewogICJLZXkiOiAiQTEiLAogICJWYWx1ZSI6ICJIYWxsbyBWYXIiLAogICJFeHBpcmF0aW9uIjogMzAwCn0=",
+        "RAT_C1": "ewogICJLZXkiOiAiQzEiLAogICJWYWx1ZSI6ICJIYWxsbyBWYXIgQyIsCiAgIkV4cGlyYXRpb24iOiA2MAp9"
       },
       "applicationUrl": "http://localhost:52346"
     },

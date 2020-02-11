@@ -12,7 +12,7 @@ using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
 using Rat.Api.Observability;
 using Rat.Api.Stores;
-using Rat.Api.Stores.Importers.Environment;
+using Rat.Api.Stores.Importers;
 using Rat.Api.Stores.Importers.JsonFile;
 using Rat.Api.Stores.Importers.Mongo;
 using Rat.Api.Stores.Importers.Mongo.Client;

@@ -58,7 +58,7 @@ services:
 
   unicorn:
     <<: *base-service-template
-    image: mirzamerdovic/unicorn:latest
+    image: mirzamerdovic/unicorn:1.0.3
     container_name: unicorn.ctn
     environment:
       - MONGO_ADDRESS=mongo:80
