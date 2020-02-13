@@ -23,14 +23,6 @@ The configuration data can be imported from several sources:
 * MongoDb Collection
 * Environment Variables
 
-## Not all imports are born equal!
-Every importer that you use requires to have a Rank specified. You can consider a rank as you would consider a weight when doing some load balancing scenarios.  
-If you want to disable the importer than set the `Rank` value to be `0` and if you want to some rank to be executed last than let it have the biggest value between used importers.  
-_Example:  
-Let's say that we are using 2 importer: JSON and MongoDb and we want MongoDb importer to be executed first. All we need to to is make sure that MongoDb importer has smaller rank than JSON importer e.g. MongDb has rank of 1 and JSON a rank that equals to 2._  
-
->Rank can have the maximum value of: `int.MaxValue - 1`, because `int.Max` is reserved for Environment Variable importer so it is guaranteed it will be always executed last.  
-
 ## Importing configuration
 No matter the source of configuration data the schema below needs to be respected, meaning the imported data needs to be deserializable into this object:
 ```c#
@@ -44,6 +36,14 @@ public class ConfigurationEntry
 }
 ```
 You can of course have additional properties, but these 3 are required minimum.
+
+## Not all imports are born equal!
+Every importer that you use requires to have a Rank specified. You can consider a rank as you would consider a weight when doing some load balancing scenarios.  
+If you want to disable the importer than set the `Rank` value to be `0` and if you want to some rank to be executed last than let it have the biggest value between used importers.  
+_Example:  
+Let's say that we are using 2 importer: JSON and MongoDb and we want MongoDb importer to be executed first. All we need to to is make sure that MongoDb importer has smaller rank than JSON importer e.g. MongDb has rank of 1 and JSON a rank that equals to 2._  
+
+>Rank can have the maximum value of: `int.MaxValue - 1`, because `int.Max` is reserved for Environment Variable importer so it is guaranteed it will be always executed last.  
 
 ### Importing from JSON file
 Configuration specifed below will need to be provided inside the `appsettings.json`:
