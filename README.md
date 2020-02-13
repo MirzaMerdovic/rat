@@ -24,8 +24,14 @@ The configuration data can be imported from several sources:
 * MongoDb Collection
 * Environment Variables
 
+## Not all imports are born equal!
+Every importer that you use requires to have a Rank specified. You can consider a rank as you would consider a weight when doing some load balancing scenarios.
+If you want to disable the importer than set the `Rank` value to be `0` and if you want to some rank to be executed last than let it have the biggest value between used importers.
+Example:
+Let's say that we are using 2 importer: JSON and MongoDb and we want MongoDb importer to be executed first. All we need to to is make sure that MongoDb importer has smaller rank than JSON importer e.g. MongDb has rank of 1 and JSON a rank that equals to 2.
+
 Note:
-Currently the order of imports is hard coded and it goes: JSON file -> MongoDb -> Environment Variables. 
+Rank can have the maximum value of: `int.MaxValue - 1`, because `int.Max` is reserved for Environment Variable importer so it is guaranteed it will be always executed last.
 
 ## Importing configuration
 No matter the source of configuration data the schema below needs to be respected, meaning the imported data needs to be deserializable into this object:
@@ -45,8 +51,8 @@ You can of course have additional properties, but these 3 are required minimum.
 Configuration specifed below will need to be provided inside the `appsettings.json`:
 ```json
 "JsonFileStoreOptions": {
-    "Path": "{some_path}\\{some_name}.json",
-    "Enabled": true
+    "Rank": 1,
+    "Path": "{some_path}\\{some_name}.json"
   }
 ```
 There are just 2 settings:
@@ -73,20 +79,19 @@ The content of file should look similar to the example below:
 Configuration specifed below will need to be provided inside the `appsettings.json`:
 ```json
 "MongoStoreOptions": {
-  "Enabled": true
-},
+  "Rank": 1,
+  "MongoConnectionOptions": {
+    "Name": "mongo",
+    "Url": "mongodb://localhost:27017"
+  },
 
-"MongoConnectionOptions": {
-  "Name": "mongo",
-  "Url": "mongodb://localhost:27017"
-},
+  "MongoDatabaseOptions": {
+    "Name": "{my_database}"
+  },
 
-"MongoDatabaseOptions": {
-  "Name": "{my_database}"
-},
-
-"MongoCollectionOptions": {
-  "Name": "{my_collection}"
+  "MongoCollectionOptions": {
+    "Name": "{my_collection}"
+  }
 }
 ```
 Imported document will have auto-generated ObjectId which is only requried by MongoDb and its existence is of no consequence to :rat: 
@@ -103,7 +108,6 @@ Let's say that we are importing configurations from 2 sources: MongoDb and Envir
 
 ## TO DOs
 There are several things that I would like to address in hopefully recent future:
-* Import ordering should be configurable
 * Add ability to "plug in" an importer by offering a resuable core so one can quicily build its own API on top of it
 * Thick client - that will have configurable caching capabilities and could be distributed as a Nuget package
 * Benchmarks to figure out the capabilities of the API.
