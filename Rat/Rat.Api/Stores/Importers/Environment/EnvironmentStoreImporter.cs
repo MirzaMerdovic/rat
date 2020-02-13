@@ -12,6 +12,8 @@ namespace Rat.Api.Stores.Importers
 {
     public class EnvironmentStoreImporter : IStoreImporter
     {
+        public int Rank => int.MaxValue;
+
         public string Type => "Environment";
 
         public Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)

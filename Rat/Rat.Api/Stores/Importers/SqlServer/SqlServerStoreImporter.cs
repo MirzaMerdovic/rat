@@ -8,6 +8,8 @@ namespace Rat.Api.Stores.Importers.SqlServer
 {
     public class SqlServerStoreImporter : IStoreImporter
     {
+        public int Rank => 0;
+
         public string Type => "SqlServer";
 
         public Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)

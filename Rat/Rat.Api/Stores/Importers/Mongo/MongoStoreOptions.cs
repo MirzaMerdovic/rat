@@ -2,7 +2,7 @@
 {
     public class MongoStoreOptions
     {
-        public bool Enabled { get; set; }
+        public int Rank { get; set; }
     }
 
     public sealed class MongoConnectionOptions

@@ -13,20 +13,25 @@ namespace Rat.Api.Stores.Importers.JsonFile
 {
     public class JsonFileStoreImporter : IStoreImporter
     {
+        private static readonly Func<JsonFileStoreOptions, int> GetRank = delegate (JsonFileStoreOptions options) { return options.Rank; };
+
         private readonly JsonFileStoreOptions _options;
         private readonly ILogger _logger;
+
+        public int Rank => GetRank(_options);
 
         public string Type => "JsonFile";
 
         public JsonFileStoreImporter(IOptionsMonitor<JsonFileStoreOptions> options, ILogger<JsonFileStoreImporter> logger)
         {
             _options = options.CurrentValue ?? new JsonFileStoreOptions();
+
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)
         {
-            if (!_options.Enabled)
+            if (Rank == 0)
             {
                 _logger.LogInformation("JsonFile Store is disabled.");
 

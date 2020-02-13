@@ -12,10 +12,14 @@ namespace Rat.Api.Stores.Importers.Mongo
 {
     public class MongoStoreImporter : IStoreImporter
     {
-        public string Type => "MongoDb";
+        private static readonly Func<MongoStoreOptions, int> GetRank = delegate (MongoStoreOptions options) { return options.Rank; };
 
         private readonly MongoStoreOptions _options;
         private readonly IMongoCollectionFactory _collectionFactory;
+
+        public int Rank => GetRank(_options);
+
+        public string Type => "MongoDb";
 
         public MongoStoreImporter(IOptionsMonitor<MongoStoreOptions> options, IMongoCollectionFactory collectionFactory)
         {
@@ -25,7 +29,7 @@ namespace Rat.Api.Stores.Importers.Mongo
 
         public async Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)
         {
-            if (!_options.Enabled)
+            if (Rank == 0)
                 return Enumerable.Empty<ConfigurationEntry>();
 
             IMongoCollection<MongoConfigurationEntry> collection = await _collectionFactory.Get<MongoConfigurationEntry>(cancellation).ConfigureAwait(false);

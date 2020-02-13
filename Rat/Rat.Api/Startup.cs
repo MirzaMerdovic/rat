@@ -21,6 +21,7 @@ using Rat.Api.Stores.Importers.Mongo.Database;
 using Rat.Data;
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 
 namespace Rat.Api
@@ -58,9 +59,9 @@ namespace Rat.Api
 
             services.Configure<JsonFileStoreOptions>(configuration.GetSection(nameof(JsonFileStoreOptions)));
             services.Configure<MongoStoreOptions>(configuration.GetSection(nameof(MongoStoreOptions)));
-            services.Configure<MongoConnectionOptions>(configuration.GetSection(nameof(MongoConnectionOptions)));
-            services.Configure<MongoDatabaseOptions>(configuration.GetSection(nameof(MongoDatabaseOptions)));
-            services.Configure<MongoCollectionOptions>(configuration.GetSection(nameof(MongoCollectionOptions)));
+            services.Configure<MongoConnectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoConnectionOptions)}"));
+            services.Configure<MongoDatabaseOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoDatabaseOptions)}"));
+            services.Configure<MongoCollectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoCollectionOptions)}"));
 
             services.AddLogging(x => x.AddConsole());
 
@@ -77,7 +78,7 @@ namespace Rat.Api
 
             services.AddSingleton<IConfigurationStore>(x =>
             {
-                var importers = x.GetServices<IStoreImporter>();
+                var importers = x.GetServices<IStoreImporter>().ToList().OrderBy(x => x.Rank);
                 var entries = new ConcurrentDictionary<string, ConfigurationEntry>();
 
                 foreach (var importer in importers)

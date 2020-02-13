@@ -7,6 +7,8 @@ namespace Rat.Api.Stores
 {
     public interface IStoreImporter
     {
+        int Rank { get; }
+
         string Type { get; }
 
         Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation);

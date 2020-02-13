@@ -4,6 +4,6 @@
     {
         public string Path { get; set; }
 
-        public bool Enabled { get; set; }
+        public int Rank { get; set; }
     }
 }
