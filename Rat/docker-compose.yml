@@ -50,7 +50,7 @@ services:
     ports:
       - "1433:1433"
     healthcheck:
-      test: ./opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password1!5 -Q "SELECT 1" || exit 1
+      test: ./opt/mssql-tools/bin/sqlcmd -S sqlserver -U sa -P Password1! -Q "SELECT 1" || exit 1
       interval: 2s
       timeout: 2s
       retries: 3
@@ -67,7 +67,7 @@ services:
       - mongo
     volumes:
       - type: bind
-        source: ./data
+        source: ./data/unicorn
         target: /imports
         read_only: true
     healthcheck:
@@ -76,6 +76,23 @@ services:
       timeout: 3s
       retries: 3
       start_period: 1s
+
+  shower:
+    <<: *base-service-template
+    image: mirzamerdovic/shower:1.0.1
+    container_name: shower
+    depends_on:
+      - sqlserver
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./Data/shower:/opt/mssql-tools/shower
+    healthcheck:
+      test: ./bin/sqlcmd -S sqlserver -U sa -P Password1! -Q "SELECT 1" || exit 1
+      interval: 2s
+      timeout: 2s
+      retries: 3
+      start_period: 3s
 
   metabase:
     <<: *base-service-template
