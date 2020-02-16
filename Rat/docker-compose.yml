@@ -58,7 +58,7 @@ services:
 
   unicorn:
     <<: *base-service-template
-    image: mirzamerdovic/unicorn:1.0.3
+    image: mirzamerdovic/unicorn:1.1.0
     container_name: unicorn.ctn
     environment:
       - MONGO_ADDRESS=mongo:80
@@ -97,13 +97,6 @@ services:
       timeout: 2s
       retries: 3
       start_period: 3s
-
-  metabase:
-    <<: *base-service-template
-    image: metabase/metabase:latest
-    container_name: metabase
-    ports:
-      - "3000:3000"
 
 volumes:
   portainer_data:

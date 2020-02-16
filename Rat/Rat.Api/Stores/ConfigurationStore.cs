@@ -2,6 +2,7 @@
 using Rat.Data;
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rat.Api.Stores
@@ -17,7 +18,7 @@ namespace Rat.Api.Stores
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public Task<ConfigurationEntry> GetEntry(string key)
+        public Task<ConfigurationEntry> GetEntry(string key, CancellationToken cancellation)
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentNullException(nameof(key));

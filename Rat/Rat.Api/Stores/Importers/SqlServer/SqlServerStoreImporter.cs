@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Rat.Api.Stores.Importers.SqlServer.Connection;
 using Rat.Data;
 using System;
 using System.Collections.Generic;
@@ -23,10 +24,12 @@ namespace Rat.Api.Stores.Importers.SqlServer
         public string Type => "SqlServer";
 
         private readonly SqlServerStoreOptions _options;
+        private readonly ISqlConnectionFactory _connectionFactory;
 
-        public SqlServerStoreImporter(IOptionsMonitor<SqlServerStoreOptions> options)
+        public SqlServerStoreImporter(IOptionsMonitor<SqlServerStoreOptions> options, ISqlConnectionFactory connectionFactory)
         {
             _options = options?.CurrentValue ?? throw new ArgumentNullException(nameof(options));
+            _connectionFactory = connectionFactory;
         }
 
         public async Task<IEnumerable<ConfigurationEntry>> Import(CancellationToken cancellation)
@@ -35,7 +38,7 @@ namespace Rat.Api.Stores.Importers.SqlServer
                 return Enumerable.Empty<ConfigurationEntry>();
 
             var entries = new List<ConfigurationEntry>();
-            using var connections = new SqlConnection(_options.ConnectionString);
+            using var connections = _connectionFactory.CreateConnection();
 
             await connections.OpenAsync(cancellation).ConfigureAwait(false);
 

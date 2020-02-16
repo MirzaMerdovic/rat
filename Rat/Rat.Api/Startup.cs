@@ -19,6 +19,7 @@ using Rat.Api.Stores.Importers.Mongo.Client;
 using Rat.Api.Stores.Importers.Mongo.Collection;
 using Rat.Api.Stores.Importers.Mongo.Database;
 using Rat.Api.Stores.Importers.SqlServer;
+using Rat.Api.Stores.Importers.SqlServer.Connection;
 using Rat.Data;
 using System;
 using System.Collections.Concurrent;
@@ -64,6 +65,7 @@ namespace Rat.Api
             services.Configure<MongoDatabaseOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoDatabaseOptions)}"));
             services.Configure<MongoCollectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoCollectionOptions)}"));
             services.Configure<SqlServerStoreOptions>(configuration.GetSection(nameof(SqlServerStoreOptions)));
+            services.Configure<SqlConnectionFactoryOptions>(configuration.GetSection($"{nameof(SqlServerStoreOptions)}:{nameof(SqlConnectionFactoryOptions)}"));
 
             services.AddLogging(x => x.AddConsole());
 
@@ -72,6 +74,8 @@ namespace Rat.Api
             services.AddSingleton<IMongoClientFactory, MongoClientFactory>();
             services.AddSingleton<IMongoDatabaseFactory, MongoDatabaseFactory>();
             services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
+
+            services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
 
             // Register your types
             services.AddTransient<IStoreImporter, JsonFileStoreImporter>();
