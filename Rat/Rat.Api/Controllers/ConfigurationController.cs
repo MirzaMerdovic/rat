@@ -16,6 +16,14 @@ namespace Rat.Api.Controllers
             _store = store ?? throw new ArgumentNullException(nameof(store));
         }
 
+        [HttpGet("reload")]
+        public async Task<IActionResult> Get(CancellationToken cancellation)
+        {
+            await _store.Load(cancellation).ConfigureAwait(false);
+
+            return Ok();
+        }
+
         [HttpGet("{key}")]
         public async Task<IActionResult> Get(string key, CancellationToken cancellation)
         {

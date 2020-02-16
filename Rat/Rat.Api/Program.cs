@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Rat.Api.Stores;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Rat.Api
@@ -14,9 +16,15 @@ namespace Rat.Api
         /// </summary>
         /// <param name="args">Arguments</param>
         /// <returns>A task.</returns>
-        public static Task Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            return CreateHostBuilder(args).Build().RunAsync();
+            using var source = new CancellationTokenSource();
+
+            var builder = CreateHostBuilder(args).Build();
+            var store = (IConfigurationStore)builder.Services.GetService(typeof(IConfigurationStore));
+            await store.Load(source.Token).ConfigureAwait(false);
+
+            await builder.RunAsync(source.Token).ConfigureAwait(false);
         }
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>

@@ -83,26 +83,7 @@ namespace Rat.Api
             services.AddTransient<IStoreImporter, SqlServerStoreImporter>();
             services.AddTransient<IStoreImporter, EnvironmentStoreImporter>();
 
-            services.AddSingleton<IConfigurationStore>(x =>
-            {
-                var importers = x.GetServices<IStoreImporter>().ToList().OrderBy(x => x.Rank);
-                var entries = new ConcurrentDictionary<string, ConfigurationEntry>();
-
-                foreach (var importer in importers)
-                {
-                    var store = importer.Import(CancellationToken.None).GetAwaiter().GetResult();
-
-                    foreach(var item in store)
-                    {
-                        if (string.IsNullOrWhiteSpace(item.Key))
-                            throw new ArgumentException($"FileStore: {importer.Type} has and entry without key.");
-
-                        entries[item.Key.Trim().ToUpperInvariant()] = item;
-                    }
-                }
-
-                return new ConfigurationStore(entries, x.GetService<ILogger<ConfigurationStore>>());
-            });
+            services.AddSingleton<IConfigurationStore, ConfigurationStore>();
 
             // Refer to this article if you require more information on CORS
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors
