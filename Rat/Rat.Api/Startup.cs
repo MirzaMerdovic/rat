@@ -21,6 +21,7 @@ using Rat.Api.Stores.Importers.Mongo.Database;
 using Rat.Api.Stores.Importers.SqlServer;
 using Rat.Api.Stores.Importers.SqlServer.Connection;
 using Rat.Data;
+using Rat.Providers.Client;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
@@ -84,6 +85,7 @@ namespace Rat.Api
             services.AddTransient<IStoreImporter, EnvironmentStoreImporter>();
 
             services.AddSingleton<IConfigurationStore, ConfigurationStore>();
+            services.AddSingleton<IClientRegistrationProvider, ClientRegistrationProvider>();
 
             // Refer to this article if you require more information on CORS
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors
