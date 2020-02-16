@@ -3,11 +3,12 @@
 USE master
 GO
 
-ALTER DATABASE Rat SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-
 -- Create the new database if it does not exist already
 IF EXISTS (SELECT [name] FROM sys.databases WHERE [name] = N'Rat')
-    DROP DATABASE rat
+BEGIN
+	ALTER DATABASE Rat SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE Rat
+END
 
 CREATE DATABASE Rat
 GO

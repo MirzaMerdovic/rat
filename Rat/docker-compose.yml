@@ -79,8 +79,12 @@ services:
 
   shower:
     <<: *base-service-template
-    image: mirzamerdovic/shower:1.0.1
+    image: mirzamerdovic/shower:1.2.0
     container_name: shower
+    environment:
+      - SERVER_INSTANCE=sqlserver
+      - USER_ID=sa
+      - PASSWORD=Password1!
     depends_on:
       - sqlserver
     stdin_open: true
