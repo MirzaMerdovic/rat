@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Api.Stores.Importers.Mongo.Collection
+namespace Rat.Api.DataAccess.Mongo.Collection
 {
     public interface IMongoCollectionFactory
     {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Rat.Api.Stores.Importers.Mongo.Database;
+using Rat.Api.DataAccess.Mongo.Database;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Api.Stores.Importers.Mongo.Collection
+namespace Rat.Api.DataAccess.Mongo.Collection
 {
     public sealed class MongoCollectionFactory : IMongoCollectionFactory
     {

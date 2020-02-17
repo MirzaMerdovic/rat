@@ -1,4 +1,4 @@
-﻿namespace Rat.Api.Stores.Importers.JsonFile
+﻿namespace Rat.Api.Importers.JsonFile
 {
     public class JsonFileStoreOptions
     {

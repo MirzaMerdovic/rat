@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Rat.Api.Stores;
 using Rat.Data;
-using Rat.Providers.Client;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,11 +10,11 @@ namespace Rat.Api.Controllers
     [Route("api/[controller]")]
     public class ClientController : Controller
     {
-        private readonly IClientRegistrationProvider _clientRegistration;
+        private readonly IClientStore _clientRegistration;
 
-        public ClientController(IClientRegistrationProvider clientRegistration)
+        public ClientController(IClientStore clientStore)
         {
-            _clientRegistration = clientRegistration ?? throw new ArgumentNullException(nameof(clientRegistration));
+            _clientRegistration = clientStore ?? throw new ArgumentNullException(nameof(clientStore));
         }
 
         [HttpPost()]

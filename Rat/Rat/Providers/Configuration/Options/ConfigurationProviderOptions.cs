@@ -7,7 +7,7 @@ namespace Rat.Providers.Configuration
     {
         public bool CachingDisabled { get; set; }
 
-        public TimeSpan CacheExpiry { get; set; }
+        public double CacheExpiry { get; set; } = TimeSpan.FromHours(24).TotalSeconds;
 
         public string ConfigurationApiBaseUrl { get; set; }
 

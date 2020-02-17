@@ -1,6 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.Extensions.Options;
-using Rat.Api.Stores.Importers.SqlServer.Connection;
+﻿using Microsoft.Extensions.Options;
+using Rat.Api.DataAccess.SqlServer.Connection;
 using Rat.Data;
 using System;
 using System.Collections.Generic;
@@ -9,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Api.Stores.Importers.SqlServer
+namespace Rat.Api.Importers.SqlServer
 {
     public class SqlServerStoreImporter : IStoreImporter
     {
@@ -51,9 +50,8 @@ namespace Rat.Api.Stores.Importers.SqlServer
             {
                 var key = await reader.GetFieldValueAsync<string>("Key", cancellation).ConfigureAwait(false);
                 var value = await reader.GetFieldValueAsync<string>("Value", cancellation).ConfigureAwait(false);
-                var expires = await reader.GetFieldValueAsync<int>("Expires", cancellation).ConfigureAwait(false);
 
-                entries.Add(new ConfigurationEntry { Key = key, Value = value, Expiration = expires });
+                entries.Add(new ConfigurationEntry { Key = key, Value = value });
 
             }
 

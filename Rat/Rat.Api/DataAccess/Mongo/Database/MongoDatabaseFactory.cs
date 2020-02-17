@@ -1,14 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Rat.Api.Stores.Importers.Mongo.Client;
+using Rat.Api.DataAccess.Mongo.Client;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Api.Stores.Importers.Mongo.Database
+namespace Rat.Api.DataAccess.Mongo.Database
 {
     public sealed class MongoDatabaseFactory : IMongoDatabaseFactory
     {

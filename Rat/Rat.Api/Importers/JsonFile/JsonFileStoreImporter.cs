@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Api.Stores.Importers.JsonFile
+namespace Rat.Api.Importers.JsonFile
 {
     public class JsonFileStoreImporter : IStoreImporter
     {
@@ -24,7 +24,7 @@ namespace Rat.Api.Stores.Importers.JsonFile
 
         public JsonFileStoreImporter(IOptionsMonitor<JsonFileStoreOptions> options, ILogger<JsonFileStoreImporter> logger)
         {
-            _options = options.CurrentValue ?? new JsonFileStoreOptions();
+            _options = options?.CurrentValue ?? new JsonFileStoreOptions();
 
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }

@@ -4,7 +4,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Concurrent;
 
-namespace Rat.Api.Stores.Importers.Mongo.Client
+namespace Rat.Api.DataAccess.Mongo.Client
 {
     public sealed class MongoClientFactory : IMongoClientFactory
     {

@@ -1,4 +1,4 @@
-﻿namespace Rat.Api.Stores.Importers.SqlServer
+﻿namespace Rat.Api.Importers.SqlServer
 {
     public class SqlServerStoreOptions
     {

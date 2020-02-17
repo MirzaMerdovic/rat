@@ -10,22 +10,20 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json.Serialization;
+using Rat.Api.DataAccess.Mongo;
+using Rat.Api.DataAccess.Mongo.Client;
+using Rat.Api.DataAccess.Mongo.Collection;
+using Rat.Api.DataAccess.Mongo.Database;
+using Rat.Api.DataAccess.SqlServer;
+using Rat.Api.DataAccess.SqlServer.Connection;
+using Rat.Api.Importers;
+using Rat.Api.Importers.JsonFile;
+using Rat.Api.Importers.Mongo;
+using Rat.Api.Importers.SqlServer;
 using Rat.Api.Observability;
 using Rat.Api.Stores;
 using Rat.Api.Stores.Importers;
-using Rat.Api.Stores.Importers.JsonFile;
-using Rat.Api.Stores.Importers.Mongo;
-using Rat.Api.Stores.Importers.Mongo.Client;
-using Rat.Api.Stores.Importers.Mongo.Collection;
-using Rat.Api.Stores.Importers.Mongo.Database;
-using Rat.Api.Stores.Importers.SqlServer;
-using Rat.Api.Stores.Importers.SqlServer.Connection;
-using Rat.Data;
-using Rat.Providers.Client;
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Threading;
 
 namespace Rat.Api
 {
@@ -85,7 +83,7 @@ namespace Rat.Api
             services.AddTransient<IStoreImporter, EnvironmentStoreImporter>();
 
             services.AddSingleton<IConfigurationStore, ConfigurationStore>();
-            services.AddSingleton<IClientRegistrationProvider, ClientRegistrationProvider>();
+            services.AddSingleton<IClientStore, ClientStore>();
 
             // Refer to this article if you require more information on CORS
             // https://docs.microsoft.com/en-us/aspnet/core/security/cors

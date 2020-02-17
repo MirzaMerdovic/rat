@@ -1,18 +1,18 @@
-[{
-        "Key": "A1",
-        "Value": "Hallo",
-        "Expiration": 300
-    }, {
-        "Key": "A2",
-        "Value": "Hallo alo",
-        "Expiration": 600
-    }, {
-        "Key": "A3",
-        "Value": "Hej!",
-        "Expiration": 300
-    }, {
-        "Key": "B1",
-        "Value": "Meraba",
-        "Expiration": 60
-    }
+[
+  {
+    "Key": "A1",
+    "Value": "Hallo"
+  },
+  {
+    "Key": "A2",
+    "Value": "Hallo alo"
+  },
+  {
+    "Key": "A3",
+    "Value": "Hej!"
+  },
+  {
+    "Key": "B1",
+    "Value": "Meraba"
+  }
 ]

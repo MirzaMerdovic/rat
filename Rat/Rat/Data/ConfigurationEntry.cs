@@ -7,7 +7,5 @@ namespace Rat.Data
         public string Key { get; set; }
 
         public object Value { get; set; }
-
-        public int Expiration { get; set; }
     }
 }

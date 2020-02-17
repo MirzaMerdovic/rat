@@ -1,4 +1,4 @@
-﻿namespace Rat.Api.Stores.Importers.SqlServer.Connection
+﻿namespace Rat.Api.DataAccess.SqlServer
 {
     public class SqlConnectionFactoryOptions
     {

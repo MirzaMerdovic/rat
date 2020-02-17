@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using Rat.Api.Stores.Importers.Mongo.Collection;
+using Rat.Api.DataAccess.Mongo.Collection;
 using Rat.Data;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Api.Stores.Importers.Mongo
+namespace Rat.Api.Importers.Mongo
 {
     public class MongoStoreImporter : IStoreImporter
     {

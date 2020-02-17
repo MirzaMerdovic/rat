@@ -1,10 +1,5 @@
-﻿namespace Rat.Api.Stores.Importers.Mongo
+﻿namespace Rat.Api.DataAccess.Mongo
 {
-    public class MongoStoreOptions
-    {
-        public int Rank { get; set; }
-    }
-
     public sealed class MongoConnectionOptions
     {
         public string Name { get; set; }
