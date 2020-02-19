@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Rat.Api.Importers.Mongo
 {
-    public class MongoStoreImporter : IStoreImporter
+    internal class MongoStoreImporter : IStoreImporter
     {
         private static readonly Func<MongoStoreOptions, int> GetRank = delegate (MongoStoreOptions options) { return options.Rank; };
 

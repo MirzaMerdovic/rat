@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace Rat.Api.Importers.SqlServer
 {
-    public class SqlServerStoreImporter : IStoreImporter
+    internal class SqlServerStoreImporter : IStoreImporter
     {
         private static readonly Func<SqlServerStoreOptions, int> GetRank = delegate (SqlServerStoreOptions options) { return options.Rank; };
 
         private static readonly Func<string, string> BuildSelectConfigurationQuery = delegate (string database)
         {
-            return $"SELECT [Key], [Value], [Expires] FROM [dbo].[{database}] WITH(NOLOCK)";
+            return $"SELECT [Key], [Value] FROM [dbo].[{database}] WITH(NOLOCK)";
         };
 
         public int Rank => GetRank(_options);

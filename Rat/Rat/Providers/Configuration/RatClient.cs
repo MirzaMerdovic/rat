@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 using Rat.Data;
 using Rat.Exceptions;
 using Rat.Providers.Resiliency;
@@ -14,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace Rat.Providers.Configuration
 {
-    public sealed class ConfigurationProvider : IConfigurationProvider
+    public sealed class RatClient : IRatClient
     {
         private static readonly Func<HttpRequestException, bool> CheckError = delegate (HttpRequestException x)
         {
@@ -39,7 +40,7 @@ namespace Rat.Providers.Configuration
 
         private readonly IList<string> _keys = new List<string>();
 
-        private readonly ConfigurationProviderOptions _options;
+        private readonly RatClientOptions _options;
 
         private readonly HttpClient _client;
 
@@ -47,18 +48,18 @@ namespace Rat.Providers.Configuration
 
         private readonly IRetryProvider _retry;
 
-        public ConfigurationProvider(IOptionsMonitor<ConfigurationProviderOptions> options, IMemoryCache cache, IRetryProvider retry, IHttpClientFactory factory)
+        public RatClient(IOptionsMonitor<RatClientOptions> options, IMemoryCache cache, IRetryProvider retry, IHttpClientFactory factory)
         {
             _options = options?.CurrentValue ?? throw new ArgumentNullException(nameof(options));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _retry = retry ?? throw new ArgumentNullException(nameof(retry));
-            _client = Initialize(factory, _options.ConfigurationApiBaseUrl);
+            _client = Initialize(factory, _options.ApiBaseUrl);
 
             static HttpClient Initialize(IHttpClientFactory factory, string baseUrl)
             {
                 var client = factory.CreateClient();
 
-                if (Uri.IsWellFormedUriString(baseUrl, UriKind.Absolute))
+                if (!Uri.IsWellFormedUriString(baseUrl, UriKind.Absolute))
                     throw new ArgumentNullException("ConfigurationApiBaseUrl is missing.");
 
                 client.BaseAddress = new Uri(baseUrl);
@@ -119,29 +120,18 @@ namespace Rat.Providers.Configuration
                     _retry.RetryOn<HttpRequestException, HttpResponseMessage>(
                         CheckError,
                         TransientHttpStatusCodePredicate,
-                        () => _client.GetAsync(new Uri(key, UriKind.Relative), cancellation))
+                        () => _client.GetAsync(new Uri($"api/Configuration/{key}", UriKind.Relative), cancellation))
                     .ConfigureAwait(false);
 
             if (!response.IsSuccessStatusCode)
                 throw new ConfigurationEntryRetrievalFailed(key, response.ReasonPhrase);
 
-            var bytes = await response.Content.ReadAsByteArrayAsync().ConfigureAwait(false);
-            var entity = ConvertBytes<ConfigurationEntry>(bytes);
+            var payload = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            var entity = JsonConvert.DeserializeObject<ConfigurationEntry>(payload);
 
             _ = entity ?? throw new ConfigurationEntryNotFoundException(key);
 
             return entity;
-
-            static T ConvertBytes<T>(byte[] b)
-            {
-                if (b == null)
-                    return default;
-
-                using var stream = new MemoryStream(b);
-                object value = new BinaryFormatter().Deserialize(stream);
-
-                return (T)value;
-            }
         }
 
         private void SaveConfigurationEntity(ConfigurationEntry entity)

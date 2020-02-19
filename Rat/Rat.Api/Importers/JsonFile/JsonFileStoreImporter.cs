@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Rat.Api.Importers.JsonFile
 {
-    public class JsonFileStoreImporter : IStoreImporter
+    internal class JsonFileStoreImporter : IStoreImporter
     {
         private static readonly Func<JsonFileStoreOptions, int> GetRank = delegate (JsonFileStoreOptions options) { return options.Rank; };
 

@@ -23,6 +23,7 @@ using Rat.Api.Importers.SqlServer;
 using Rat.Api.Observability;
 using Rat.Api.Stores;
 using Rat.Api.Stores.Importers;
+using Rat.Providers.Resiliency;
 using System;
 
 namespace Rat.Api
@@ -69,6 +70,10 @@ namespace Rat.Api
             services.AddLogging(x => x.AddConsole());
 
             services.AddHealthChecks().AddCheck<BasicHealthCheck>("basic", tags: new[] { "ready", "live" });
+
+            services.AddHttpClient();
+
+            services.AddTransient<IRetryProvider, RetryProvider>();
 
             services.AddSingleton<IMongoClientFactory, MongoClientFactory>();
             services.AddSingleton<IMongoDatabaseFactory, MongoDatabaseFactory>();

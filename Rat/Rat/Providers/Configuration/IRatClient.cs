@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Rat.Providers.Configuration
 {
-    public interface IConfigurationProvider : IDisposable
+    public interface IRatClient : IDisposable
     {
         /// <summary>
         /// Removes the key from the cache.

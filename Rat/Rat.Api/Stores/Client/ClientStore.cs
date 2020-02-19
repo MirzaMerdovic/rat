@@ -5,6 +5,7 @@ using Rat.Api.DataAccess.Mongo.Collection;
 using Rat.Data;
 using Rat.Providers.Resiliency;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -17,7 +18,7 @@ namespace Rat.Api.Stores
     {
         Task<string> Register(ClientRegistrationEntry entry, CancellationToken cancellation);
 
-        Task Notify(CancellationToken cancellation);
+        Task Notify(IEnumerable<ConfigurationEntry> keys, CancellationToken cancellation);
     }
 
     public class ClientStore : IClientStore
@@ -56,7 +57,7 @@ namespace Rat.Api.Stores
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Notify(CancellationToken cancellation)
+        public async Task Notify(IEnumerable<ConfigurationEntry> updated, CancellationToken cancellation)
         {
             var collection = await _collectionFactory.Get<ClientRegistrationEntry>(cancellation).ConfigureAwait(false);
             var clients = await collection.FindAsync(_ => true, null, cancellation).ConfigureAwait(false);
@@ -66,7 +67,7 @@ namespace Rat.Api.Stores
                 return;
 
             var client = _factory.CreateClient("notifier");
-            using var content = new StringContent(JsonConvert.SerializeObject(new { Reload = true }));
+            using var content = new StringContent(JsonConvert.SerializeObject(updated.Select(x => new { Key = x.Key, Value = x.Value })));
 
             foreach (var entry in entries)
             {
