@@ -84,7 +84,7 @@ namespace Rat.Api
             // Register your types
             services.AddTransient<IStoreImporter, JsonFileStoreImporter>();
             services.AddTransient<IStoreImporter, MongoStoreImporter>();
-            services.AddTransient<IStoreImporter, SqlServerStoreImporter>();
+            //services.AddTransient<IStoreImporter, SqlServerStoreImporter>();
             services.AddTransient<IStoreImporter, EnvironmentStoreImporter>();
 
             services.AddSingleton<IConfigurationStore, ConfigurationStore>();

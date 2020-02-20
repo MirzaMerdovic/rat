@@ -59,7 +59,7 @@ namespace Rat.Api.Stores
 
         public async Task Notify(IEnumerable<ConfigurationEntry> updated, CancellationToken cancellation)
         {
-            var collection = await _collectionFactory.Get<ClientRegistrationEntry>(cancellation).ConfigureAwait(false);
+            var collection = await _collectionFactory.Get<MongoClientRegistrationEntry>(cancellation).ConfigureAwait(false);
             var clients = await collection.FindAsync(_ => true, null, cancellation).ConfigureAwait(false);
             var entries = await clients.ToListAsync().ConfigureAwait(false);
 
@@ -90,15 +90,17 @@ namespace Rat.Api.Stores
         {
             _ = entry ?? throw new ArgumentNullException(nameof(entry));
 
-            var collection = await _collectionFactory.Get<ClientRegistrationEntry>(cancellation).ConfigureAwait(false);
+            var collection = await _collectionFactory.Get<MongoClientRegistrationEntry>(cancellation).ConfigureAwait(false);
 
             var clients = await collection.FindAsync(x => x.Endpoint == entry.Endpoint, null, cancellation).ConfigureAwait(false);
             var client = await clients.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
 
-            if (client == null)
-                await collection.InsertOneAsync(entry, null, cancellation).ConfigureAwait(false);
+            var mongoEntry = new MongoClientRegistrationEntry { Name = entry.Name, Endpoint = entry.Endpoint };
 
-            return entry.Id.ToString();
+            if (client == null)
+                await collection.InsertOneAsync(mongoEntry, null, cancellation).ConfigureAwait(false);
+
+            return mongoEntry.Id.ToString();
         }
     }
 }

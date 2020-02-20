@@ -1,8 +1,9 @@
-﻿using System;
+﻿using Rat.Data;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Providers.Configuration
+namespace Rat.Clients
 {
     public interface IRatClient : IDisposable
     {
@@ -16,6 +17,8 @@ namespace Rat.Providers.Configuration
         /// Clears the cache contents.
         /// </summary>
         void ClearCache();
+
+        Task RegisterClient(ClientRegistrationEntry entry, CancellationToken cancellation);
 
         /// <summary>
         /// Loads all the keys that have been specified in the configuration.

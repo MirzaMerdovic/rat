@@ -1,19 +1,19 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using Rat.Clients.Options;
 using Rat.Data;
 using Rat.Exceptions;
 using Rat.Providers.Resiliency;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Rat.Providers.Configuration
+namespace Rat.Clients
 {
     public sealed class RatClient : IRatClient
     {
@@ -145,6 +145,24 @@ namespace Rat.Providers.Configuration
         {
             _client?.Dispose();
             _cache?.Dispose();
+        }
+
+        public async Task RegisterClient(ClientRegistrationEntry entry, CancellationToken cancellation)
+        {
+            HttpContent content = new StringContent(JsonConvert.SerializeObject(entry), Encoding.UTF8, "application/json");
+
+            var response =
+                await
+                    _client.PostAsync(
+                        new Uri("api/client", UriKind.Relative),
+                        content,
+                        cancellation)
+                    .ConfigureAwait(false);
+
+            content.Dispose();
+
+            var responseContent = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

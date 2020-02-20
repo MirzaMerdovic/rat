@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 
-namespace Rat.Providers.Configuration
+namespace Rat.Clients.Options
 {
     public class RatClientOptions
     {

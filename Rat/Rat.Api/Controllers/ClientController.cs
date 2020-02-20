@@ -22,6 +22,7 @@ namespace Rat.Api.Controllers
         {
             await _clientRegistration.Register(entry, cancellation).ConfigureAwait(false);
 
+            // TODO: Return 201
             return Ok();
         }
     }

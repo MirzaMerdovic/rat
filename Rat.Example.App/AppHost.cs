@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
-using Rat.Data;
-using Rat.Providers.Configuration;
+using Rat.Clients;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,7 +17,12 @@ namespace Rat.Example.App
 
         public async Task StartAsync(CancellationToken cancellationToken)
         {
+            await _rat.RegisterClient(new Data.ClientRegistrationEntry { Name = "Example.App", Endpoint = "http://localhost:5441" }, cancellationToken);
+
             var entry = await _rat.GetValue<string>("A1", cancellationToken).ConfigureAwait(false);
+
+            if (entry == null)
+                throw new ArgumentNullException("Configuration entry is null");
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

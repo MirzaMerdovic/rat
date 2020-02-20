@@ -1,9 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Rat.Providers.Configuration;
+using Microsoft.AspNetCore.Hosting;
+using Rat.Clients;
+using Rat.Clients.Options;
 using Rat.Providers.Resiliency;
 using System.IO;
+using Rat.Middleware;
+using Microsoft.AspNetCore.Builder;
 
 namespace Rat.Example.App
 {
@@ -16,6 +20,15 @@ namespace Rat.Example.App
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(builder =>
+                {
+                    builder.UseSetting(WebHostDefaults.DetailedErrorsKey, "true");
+                    builder.ConfigureKestrel((ctx, kso) =>
+                    {
+                        kso.ListenAnyIP(5441);
+                    });
+                    builder.Configure(app => app.UseMiddleware<RatMiddleware>());
+                })
                 .ConfigureHostConfiguration(configurator =>
                 {
                     configurator.SetBasePath(Directory.GetCurrentDirectory());
