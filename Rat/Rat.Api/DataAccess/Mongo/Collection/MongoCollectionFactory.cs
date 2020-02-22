@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Rat.Api.DataAccess.Mongo.Collection
 {
-    public sealed class MongoCollectionFactory : IMongoCollectionFactory
+    public abstract class MongoCollectionFactory<TOptions> : IMongoCollectionFactory where TOptions : MongoCollectionOptions, new()
     {
         private readonly IMongoDatabaseFactory _databaseFactory;
-        private readonly MongoCollectionOptions _options;
+        private readonly TOptions _options;
 
-        public MongoCollectionFactory(IOptions<MongoCollectionOptions> options, IMongoDatabaseFactory databaseFactory)
+        public MongoCollectionFactory(IOptions<TOptions> options, IMongoDatabaseFactory databaseFactory)
         {
             _options = options.Value ?? throw new ArgumentNullException(nameof(options));
             _databaseFactory = databaseFactory ?? throw new ArgumentNullException(nameof(databaseFactory));

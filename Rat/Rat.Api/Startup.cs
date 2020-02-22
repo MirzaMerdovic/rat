@@ -63,7 +63,8 @@ namespace Rat.Api
             services.Configure<MongoStoreOptions>(configuration.GetSection(nameof(MongoStoreOptions)));
             services.Configure<MongoConnectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoConnectionOptions)}"));
             services.Configure<MongoDatabaseOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoDatabaseOptions)}"));
-            services.Configure<MongoCollectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoCollectionOptions)}"));
+            services.Configure<ConfigurationMongoCollectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoCollectionOptions)}:Configurations"));
+            services.Configure<ClientMongoCollectionOptions>(configuration.GetSection($"{nameof(MongoStoreOptions)}:{nameof(MongoCollectionOptions)}:Clients"));
             services.Configure<SqlServerStoreOptions>(configuration.GetSection(nameof(SqlServerStoreOptions)));
             services.Configure<SqlConnectionFactoryOptions>(configuration.GetSection($"{nameof(SqlServerStoreOptions)}:{nameof(SqlConnectionFactoryOptions)}"));
 
@@ -77,7 +78,8 @@ namespace Rat.Api
 
             services.AddSingleton<IMongoClientFactory, MongoClientFactory>();
             services.AddSingleton<IMongoDatabaseFactory, MongoDatabaseFactory>();
-            services.AddSingleton<IMongoCollectionFactory, MongoCollectionFactory>();
+            services.AddSingleton<IConfigurationMongoCollectionFactory, ConfigurationMongoCollectionFactory>();
+            services.AddSingleton<IClientMongoCollectionFactory, ClientMongoCollectionFactory>();
 
             services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
 

@@ -8,4 +8,12 @@ namespace Rat.Api.DataAccess.Mongo.Collection
     {
         Task<IMongoCollection<T>> Get<T>(CancellationToken cancellationToken);
     }
+
+    public interface IClientMongoCollectionFactory : IMongoCollectionFactory
+    {
+    }
+
+    public interface IConfigurationMongoCollectionFactory : IMongoCollectionFactory
+    {
+    }
 }

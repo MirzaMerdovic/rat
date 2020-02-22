@@ -38,6 +38,7 @@ namespace Rat.Example.App
                 .ConfigureServices((context, services) =>
                 {
                     services.Configure<RatClientOptions>(context.Configuration.GetSection(nameof(RatClientOptions)));
+                    services.Configure<AppHostOptions>(context.Configuration.GetSection(nameof(AppHostOptions)));
 
                     services.AddHttpClient();
                     services.AddMemoryCache();

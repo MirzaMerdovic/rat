@@ -15,13 +15,13 @@ namespace Rat.Api.Importers.Mongo
         private static readonly Func<MongoStoreOptions, int> GetRank = delegate (MongoStoreOptions options) { return options.Rank; };
 
         private readonly MongoStoreOptions _options;
-        private readonly IMongoCollectionFactory _collectionFactory;
+        private readonly IConfigurationMongoCollectionFactory _collectionFactory;
 
         public int Rank => GetRank(_options);
 
         public string Type => "MongoDb";
 
-        public MongoStoreImporter(IOptionsMonitor<MongoStoreOptions> options, IMongoCollectionFactory collectionFactory)
+        public MongoStoreImporter(IOptionsMonitor<MongoStoreOptions> options, IConfigurationMongoCollectionFactory collectionFactory)
         {
             _options = options?.CurrentValue ?? throw new ArgumentNullException(nameof(options));
             _collectionFactory = collectionFactory ?? throw new ArgumentNullException(nameof(collectionFactory));

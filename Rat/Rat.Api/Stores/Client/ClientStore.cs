@@ -44,12 +44,12 @@ namespace Rat.Api.Stores
             return true;
         };
 
-        private readonly IMongoCollectionFactory _collectionFactory;
+        private readonly IClientMongoCollectionFactory _collectionFactory;
         private readonly IHttpClientFactory _factory;
         private readonly IRetryProvider _retryProvider;
         private readonly ILogger _logger;
 
-        public ClientStore(IMongoCollectionFactory collectionFactory, IHttpClientFactory factory, IRetryProvider retryProvider, ILogger<ClientStore> logger)
+        public ClientStore(IClientMongoCollectionFactory collectionFactory, IHttpClientFactory factory, IRetryProvider retryProvider, ILogger<ClientStore> logger)
         {
             _collectionFactory = collectionFactory ?? throw new ArgumentNullException(nameof(collectionFactory));
             _factory = factory ?? throw new ArgumentNullException(nameof(factory));
@@ -90,8 +90,15 @@ namespace Rat.Api.Stores
         {
             _ = entry ?? throw new ArgumentNullException(nameof(entry));
 
-            var collection = await _collectionFactory.Get<MongoClientRegistrationEntry>(cancellation).ConfigureAwait(false);
+            if (!Uri.IsWellFormedUriString(entry.Endpoint, UriKind.Absolute))
+                throw new ArgumentException($"Value: {entry.Endpoint} is not valid");
 
+            entry.Endpoint =
+            entry.Endpoint.EndsWith("/", StringComparison.InvariantCultureIgnoreCase)
+              ? entry.Endpoint += "rat/notify"
+              : entry.Endpoint += "/rat/notify";
+
+            var collection = await _collectionFactory.Get<MongoClientRegistrationEntry>(cancellation).ConfigureAwait(false);
             var clients = await collection.FindAsync(x => x.Endpoint == entry.Endpoint, null, cancellation).ConfigureAwait(false);
             var client = await clients.FirstOrDefaultAsync(cancellation).ConfigureAwait(false);
 

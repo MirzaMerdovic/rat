@@ -12,8 +12,16 @@
         public string Name { get; set; }
     }
 
-    public sealed class MongoCollectionOptions
+    public abstract class MongoCollectionOptions
     {
         public string Name { get; set; }
+    }
+
+    public sealed class ConfigurationMongoCollectionOptions : MongoCollectionOptions
+    {
+    }
+
+    public sealed class ClientMongoCollectionOptions : MongoCollectionOptions
+    {
     }
 }

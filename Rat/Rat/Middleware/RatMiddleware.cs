@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Rat.Clients;
 using System;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Rat.Middleware
@@ -23,11 +24,17 @@ namespace Rat.Middleware
         {
             if (context.Request.Path.HasValue && context.Request.Path.Value.Equals("/rat/notify", StringComparison.InvariantCultureIgnoreCase))
             {
+                _logger.LogInformation("Received clear cache command.");
+
                 _rat.ClearCache();
+
+                context.Response.StatusCode = 200;
+                await context.Response.WriteAsync("Cache cleared", Encoding.UTF8).ConfigureAwait(false);
+
+                return;
             }
 
-            // TODO: Return OK response.
-            await _next.Invoke(context).ConfigureAwait(false);
+            await _next(context).ConfigureAwait(false);
         }
     }
 }
