@@ -33,14 +33,21 @@ namespace Rat.Api.Stores
         {
             foreach (var importer in _importers)
             {
-                var store = await importer.Import(cancellation).ConfigureAwait(false);
-
-                foreach (var item in store)
+                try
                 {
-                    if (string.IsNullOrWhiteSpace(item.Key))
-                        throw new ArgumentException($"FileStore: {importer.Type} has and entry without key.");
+                    var store = await importer.Import(cancellation).ConfigureAwait(false);
 
-                    _entries[item.Key.Trim().ToUpperInvariant()] = item;
+                    foreach (var item in store)
+                    {
+                        if (string.IsNullOrWhiteSpace(item.Key))
+                            throw new ArgumentException($"FileStore: {importer.Type} has and entry without key.");
+
+                        _entries[item.Key.Trim().ToUpperInvariant()] = item;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Failed to import from store: {importer.Type}");
                 }
             }
         }
