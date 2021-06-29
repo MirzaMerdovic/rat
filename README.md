@@ -18,6 +18,15 @@ So, that's how the idea for :rat: came to life.
 # Architecture
 ![rat system overview](Rat/documentation/diagrams/rat-overview.svg)
 
+## [Rat Admin](https://github.com/throw-if-null/rat/blob/branch-0/Rat/documentation/admin/rat-admin.md)
+The UI that can be used for managing configuration entries and more
+
+## [Rat Client](https://github.com/throw-if-null/rat/blob/branch-0/Rat/documentation/client/rat-client.md)
+Opinionated wrapper around HttpClient that can be used by consuming applications (clients) for simplified acces to Rat Api. 
+
+## [Rat Api](https://github.com/throw-if-null/rat/blob/branch-0/Rat/documentation/api/rat-api.md)
+Backend that serves request from both: client applications and Rat Admin, it is also responsible for managing data import and enabling pub-sub.
+
 # How it works?
 
 The :rat: is build in C# using .net core 3.1 and it exposes a very simple API that currently offers only one method GET by key.
