@@ -15,6 +15,9 @@ I needed something that will not require extra work, or huge refactoring in orde
 
 So, that's how the idea for :rat: came to life. 
 
+# Architecture
+![rat system overview](Rat/documentation/diagrams/rat-overview.svg)
+
 # How it works?
 
 The :rat: is build in C# using .net core 3.1 and it exposes a very simple API that currently offers only one method GET by key.
